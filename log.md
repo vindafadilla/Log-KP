@@ -28,3 +28,11 @@ Yang telah dipelajari:
 4. Request method di GoLang
 5. HTTP response
 6. Penggunaan GoLang di webApp: Hello Go (Hello World GoLang di webApp).
+
+
+#Log Senin, 26 Juli 2016
+
+##Membuat Milestone dan Logbook
+
+##Membuat program GoLang sederhana (belum selesai dan masih error)
+Membuat program GoLang sederhana untuk memeriksa bahasa pascal yang sebelumnya pernah saya buat di C.
