@@ -64,6 +64,8 @@ b. Membuat program
  - Hasil: Baru bisa membaca file, pembuatan packe masih error. Lihat hasil pada https://www.dropbox.com/s/w8olv5crc9gem6q/GoLang1.PNG?dl=0
  - Sumber : https://golang.org/doc/code.html
 
-##Menginstall directori gin-gonic dan requirement directori lainnya seperti render di github
+##Mendownload directori gin-gonic dan requirement directori lainnya seperti render di github
 
 ##Mencoba GoLang dengan html (sedang dalam proses)
+
+#Log Kamis, 28 Juli 2016
