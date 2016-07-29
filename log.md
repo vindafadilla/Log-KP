@@ -263,3 +263,90 @@ Hasilnya dapat dilihat di :  https://www.dropbox.com/s/qg7eg03rhywwjnn/GoLanghtt
 https://www.dropbox.com/s/xoe4f7xg8rxyu00/GoLanghttp2.PNG?dl=0
 
 #Jumat, 29 Juli 2016
+
+##Membuat database dummy di MongoDB
+
+Latihan Insert, Update, Delete. Sejauh ini masih aman, dengan kata lain belum ada masalah. 
+
+Hasilnya:
+https://www.dropbox.com/s/pbaoinvjockkpvz/MongoDBtry3.PNG?dl=0
+https://www.dropbox.com/s/fdvgwb6iu6nnsvt/MongoDBtry2.PNG?dl=0
+https://www.dropbox.com/s/5uvzpvo92sb76sv/MongoDBtry1.PNG?dl=0
+https://www.dropbox.com/s/9j60l89upgzg6mb/MongoDBtry1_2.PNG?dl=0
+https://www.dropbox.com/s/v2l6xz23wqn17y4/MongoDBtry1_3.PNG?dl=0
+https://www.dropbox.com/s/yqcjfxuku96j0e6/MongoDBtry1_4.PNG?dl=0
+https://www.dropbox.com/s/ty1agkdzc5gxp93/MongoDBtry4.PNG?dl=0
+https://www.dropbox.com/s/u5aakpy7mnfm7u8/MongoDBtry5.PNG?dl=0
+https://www.dropbox.com/s/b3m5yebdizc1t7o/MongoDBtry6.PNG?dl=0
+
+Saya melakukannya dengan melihat step by step pada resource berikut:
+https://docs.mongodb.com/manual/crud/
+
+##Implementasi akses ke mongoDB dengan mango (mgo).
+
+1. Install mango
+dengan go get gopkg.in/mgo.v2
+Untuk mengetahui berhasil atau tidaknya dapat dilihat di folder src atau pkg. Dalam kasus saya dalam folder pkg. Hanya saja karena folder saya berantakan, saya sedikit sulit menemukannya.
+
+2. Melakukan implementasi melalui kode yang ada sebelumnya. 
+
+package main
+
+import (
+        "fmt"
+	"log"
+        "gopkg.in/mgo.v2"
+        "gopkg.in/mgo.v2/bson"
+)
+
+type Person struct {
+        Name string
+        Phone string
+}
+
+func main() {
+        session, err := mgo.Dial("127.0.0.1")
+        if err != nil {
+                panic(err)
+        }
+        defer session.Close()
+
+        // Optional. Switch the session to a monotonic behavior.
+        session.SetMode(mgo.Monotonic, true)
+
+        c := session.DB("test").C("people")
+        err = c.Insert(&Person{"Ale", "+55 53 8116 9639"},
+	               &Person{"Cla", "+55 53 8402 8510"})
+        if err != nil {
+                log.Fatal(err)
+        }
+
+        result := Person{}
+        err = c.Find(bson.M{"name": "Ale"}).One(&result)
+        if err != nil {
+                log.Fatal(err)
+        }
+
+        fmt.Println("Phone:", result.Phone)
+}
+
+Sebelumnya pada bagian url di mgo.Dial yang terdapat pada web adalah server.example.com, lalu saya ubah menjadi localhost menyesuaikan dengan server yang ada. Sedikit error pada awalnya karena saya salah menuliskan urlnya. Tapi sejauh ini masih bisa ditangani.
+
+3. Menjalankan program go.
+menjalankan program go yang telah dituliskan di cmd dan menjalankan servernya. maka akan keluar hasilnya nomor telepon Ale. 
+
+4. Mengecek databasenya pada mongoDB.
+Saya memeriksa database yang telah diinsertkan melalui cmd mongo.exe, lalu find collection people sesuai collection yang saya insertkan pada program go.
+
+Hasil dan prosesnya dapat dilihat di:
+
+https://www.dropbox.com/s/1orii76zk97r70c/MangoDB.PNG?dl=0
+https://www.dropbox.com/s/glbwsfncfdjqt5d/MangoDB2.PNG?dl=0
+https://www.dropbox.com/s/z9jdx4okvpksocd/MangoDB3.PNG?dl=0
+https://www.dropbox.com/s/xqscx3n38e4f5xv/MangoDB4.PNG?dl=0
+https://www.dropbox.com/s/a9d48iaqnj64kup/MangoDB5.PNG?dl=0
+
+
+##Mempelajari REST API dengan dokumen yang diberikan, melalui tool mkdocs
+
+Pertama, saya menginstall python. Awalnya saya menginstall yang release 3, tapi karena gagal terus, maka saya menginstall release 2. Pada release 2 juga sempat gagal karena pada saat instalasi saya lupa add pada path local. Jadi harus saya install ulang kembali. Setelah berhasil diinstall ulang saya malah lupa menambahkan environment variable nya python, tapi tidak perlu install ulang lagi. Hingga akhirnya berhasil menginstall mkdocs dan mempelajari REST APIs
