@@ -552,3 +552,116 @@ https://github.com/jkbrzt/httpie
 Sampai saat ini saya baru mengimplementasikan gin.BasicAuth(), belum lebih jauh menggunkan RESTful API pada Go dengan framework gin-gonic. 
 Untuk sementara, karena saya masih mempelajari implementasi dari REST API pada go, saya akan mencoba implementasi db yang telah di berikan pada go. 
 Terimakasih.
+
+
+#Log Rabu, 3 Agustus 2016
+
+##Implementasi database
+
+Saya menggunakan database yang diberikan untuk dapat digunakan pada web server pada golang menggunakan package mgo atau mango.
+
+package main
+
+import (
+	"fmt"
+	"log"
+    
+    "gopkg.in/mgo.v2"
+    "gopkg.in/mgo.v2/bson"
+	"github.com/gin-gonic/gin"
+)
+
+type User struct {
+        Id string `json:"id" bson:"_id"`
+        Pass string `json:"password" bson:"password"`
+        Verified string `json:"verified" bson:"verified"`
+        Challenge int `json:"challenge" bson:"challenge"`
+        Key int `json:"key"  bson:"key"`
+        Gcmregid string `json:"gcmregid" bson:"gcmregid"`
+        Counter string `json:"counter" bson:"counter"`
+        Created_at string `json:"created_at" bson:"created_at"`
+        Updated_at string `json:"updated_at" bson:"updated_at"`
+        Country_code string `json:"country_code" bson:"country_code"`
+        Continent string `json:"continent" bson:"continent"`
+}
+
+var DB = make(map[string]string)
+
+func main() {
+
+	session, err := mgo.Dial("127.0.0.1")
+    if err != nil {
+    	panic(err)
+    }
+    defer session.Close()
+
+    // Optional. Switch the session to a monotonic behavior.
+    session.SetMode(mgo.Monotonic, true)
+
+    c := session.DB("cdr-dump").C("user")
+        
+   results := User{}
+        err = c.Find(bson.M{"_id": "+15555215554"}).One(&results)
+        if err != nil {
+                log.Fatal(err)
+        }
+
+        fmt.Println("Responder:", results.Id)
+
+	r := gin.Default()
+
+	// Ping test
+	r.GET("/ping", func(c *gin.Context) {
+		c.String(200, "pong")
+	})
+
+	// Get user value
+	r.GET("/user/:name", func(c *gin.Context) {
+		user := c.Params.ByName("name")
+		value, ok := DB[user]
+		if ok {
+			c.JSON(200, gin.H{"user": results.Id, "value": value, "pass" : results.Pass})
+		} else {
+			c.JSON(200, gin.H{"user": results.Id, "status": "no value", "pass" : results.Pass})
+		}
+	})
+	// Authorized group (uses gin.BasicAuth() middleware)
+	// Same than:
+	// authorized := r.Group("/")
+	// authorized.Use(gin.BasicAuth(gin.Credentials{
+	// "foo": "bar",
+	// "manu": "123",
+	//}))
+	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
+		"results.Id": "results.Pass", // user:foo password:bar
+	}))
+
+	authorized.POST("admin", func(c *gin.Context) {
+		user := c.MustGet(gin.AuthUserKey).(string)
+		// Parse JSON
+		var json struct {
+			Value string `json:"value" binding:"required"`
+		}
+		if c.Bind(&json) == nil {
+			DB[user] = json.Value
+			c.JSON(200, gin.H{"status": "ok"})
+		}
+	})
+	// Listen and Server in 0.0.0.0:8080
+	r.Run(":8080")
+}
+
+Hasil yg telah di capture dapat dilihat pada link berikut :
+https://www.dropbox.com/s/ow2t34ywn03u32v/gincoba11.PNG?dl=0
+https://www.dropbox.com/s/aeh76xc5mddt6qg/gincoba12.PNG?dl=0
+
+##Mempelajari pembuatan RESTful di golang menggunakan jwt (JSON Web Token)
+
+Saya mempelajarinya dengan menggunakan HTTP Basic Authentication. Didefinisikan dalam spesifikasi HTTP resmi, pada dasarnya melibatkan pengaturan header pada respon server yang menunjukkan otentikasi diperlukan. Klien harus merespon dengan melampirkan identitasnya, termasuk password mereka, untuk setiap permintaan berikutnya. Jika kredensial sesuai, informasi pengguna yang tersedia untuk aplikasi server sebagai sebagai variabel.
+
+Pendekatan kedua sangat mirip, tetapi menggunakan mekanisme otentikasi aplikasi sendiri. Hal ini biasanya melibatkan memeriksa kredensial disediakan terhadap mereka dalam penyimpanan. Seperti HTTP Basic Authentication, ini mengharuskan kredensial pengguna yang disertakan dengan setiap panggilan.
+
+Pendekatan ketiga adalah OAuth (atau OAuth2). Dirancang untuk sebagian besar untuk otentikasi terhadap layanan pihak ketiga, dapat lebih menantang untuk diaplikasikan, setidaknya pada server-side.
+
+Pendekatan keempat adalah menggunakan token. Nah, inilah yang akan saya pelajari. Kita akan melihat sebuah implementasi yang memanfaatkan JavaScript pada bagian frontend dan backend.
+ 
