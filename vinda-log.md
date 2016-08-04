@@ -664,4 +664,23 @@ Pendekatan kedua sangat mirip, tetapi menggunakan mekanisme otentikasi aplikasi 
 Pendekatan ketiga adalah OAuth (atau OAuth2). Dirancang untuk sebagian besar untuk otentikasi terhadap layanan pihak ketiga, dapat lebih menantang untuk diaplikasikan, setidaknya pada server-side.
 
 Pendekatan keempat adalah menggunakan token. Nah, inilah yang akan saya pelajari. Kita akan melihat sebuah implementasi yang memanfaatkan JavaScript pada bagian frontend dan backend.
+
+#Log, Kamis 4 Agustus 2016
+
+## JSON Web Token
+JSON Web Token ( JWT ) adalah compact URL - safe  mewakili klaim yang akan ditransfer antara dua pihak . Klaim dalam JWT di encode sebagai objek JSON yang ditandatangani secara digital menggunakan JSON Web Signature ( JWS ) .
+
+Sebuah JWT terdiri dari tiga komponen utama : objek header, klaim object , dan signature. Ketiga sifat di encode menggunakan base64 , kemudian digabungkan dengan periode sebagai pemisah .
+
+JWT object claims terdiri dari informasi keamanan tentang pesannya. Contohnya:
+
+1. iss. Is the issuer of the claim. Connect menggunakannya untuk mengidentifikasi aplikasi untuk pembuatan panggilan.
+2. iat. Issued-at time. Terdiri dari UTC Unix time dimana token ini menjadi issue. Tidak ada requirement yang sulit seputar klaim ini tetapi bukan berarti hal ini akan berlaku secara signifikan setelahnya. Juga, old issued-at times bisa dikarenakan token lama yang mencurigakan.
+3. sub. subjek dari token ini. Ini merupakan user yang berasosiasi dengan aksi yang relevan, dan kemungkinan tidak akan dimunculkan jika tidak log pada user.
+
+
+##Otentikasi dengan JWT
+JSON Web Token (JWT) merupakan pendekatan yang lebih modern untuk otentikasi. Sebagai web berubah ke pemisahan yang cukup besar antara klien dan server, JWT menyediakan alternatif yang luar biasa dibandingkan model otentikasi berorientasi cookie tradisional..
+
+JWT menyediakan jalan untuk klien untuk mengotentikasi setiap request tanpa harus memaintain session atau secara berulang melewati login credential ke server.
  
