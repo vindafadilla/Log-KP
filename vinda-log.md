@@ -683,4 +683,5 @@ JWT object claims terdiri dari informasi keamanan tentang pesannya. Contohnya:
 JSON Web Token (JWT) merupakan pendekatan yang lebih modern untuk otentikasi. Sebagai web berubah ke pemisahan yang cukup besar antara klien dan server, JWT menyediakan alternatif yang luar biasa dibandingkan model otentikasi berorientasi cookie tradisional..
 
 JWT menyediakan jalan untuk klien untuk mengotentikasi setiap request tanpa harus memaintain session atau secara berulang melewati login credential ke server.
- 
+
+#Log, Jumat 4 Agustus 2016
