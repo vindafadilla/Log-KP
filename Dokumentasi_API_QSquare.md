@@ -243,3 +243,71 @@ Requires token-based authentication.
 6. Mengambil page dari database yang sebelumnya diubah terlebih dahulu dari string menjadi integer dan menampungnya ke variabel.
 7. Membuild query, jika nama, Id dan code dari organisasi tidak kosong, maka nilai dari nama, Id dan code akan ditampung ke dalam variabel map.
 8. Lalu, akan memberikan response berupa data json yang berisi data-data salah satunya nama, code dan Id dari perusahaan.
+
+## Authentication API
+
+### Login
+
+#### Request
+
+	POST /api/login
+
+#### Mandatory Parameters :
+
+* `username` : username 
+* `password` : password 
+
+#### Response :
+
+* `400` : Bad Request, Invalid Param
+* `403` : Unauthorize user
+* `500` : Internal Server error
+* `200` : OK
+
+#### Proses
+1. Inisialisasi varibel dan database
+2. Data binding untuk merequest data untuk login. Jika terdapat error akan terdapat pesan "Error when binding request, error = " dengan penjelasan error yang di dapatkan melalui log.
+3. Mengecek otorisasi user dengan mengecek data username yang dimasukkan oleh user dengan data username yang ada pada database. Jika sama akan mengembalikan nilai error sama dengan nil, sedangkan jika tidak ada yang sama dengan database maka akan ditampilkan status error. Lalu akan mengecek password dengan membandingkannya menggunakan bcrypt untuk enkripsi password dengan password pada database. Selanjutnya di periksa, apakah akun dari user masih aktif atau tidak.
+4. Jika user telah terotorisasi, maka selanjutnya adalah membuat token. Jika token yang dibuat invalid, maka akan terdapat pesan error.
+5. Jika semua proses telah terlewati tanpa error, maka akan diberikan response berupa data json yang berisi data-data user. Username, IsSuperUser, UserID, token dan group dari user.
+
+### Logout
+
+#### Request
+
+	Requires token-based authentication
+	POST /api/logout
+
+
+#### Response :
+
+* `500` : Internal Server error
+* `200` : OK
+
+#### Proses
+1. Mengambil nilai dari key mongosession dan key username.
+2. Menghapus token dan cookies, sehingga user dengan username yang di hapus tidak dapat mengakses halaman yang diinginkan kecuali telah login kembali.
+
+## User Group API
+
+### Add New Group
+
+#### Request :
+
+Requires token-based authentication.
+
+	POST /api/v1/auth/group/add
+
+#### Parameters :
+
+* `group_name` : group name. Mandatory. 
+* `api_ids` : Array of string. represent api id that will be assigned to the current group. Optional
+
+#### Response
+
+* `409` : Conflict. Group with same name already exist
+* `500` : Internal server error
+* `201` : Created
+
+#### Proses
+1. 
